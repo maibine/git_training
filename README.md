@@ -20,7 +20,6 @@ Let's get started!
 
 ---
 - [Learn `git` concepts, not commands](#learn-git-concepts-not-commands)
-  - [- Reading history](#--reading-history)
   - [Overview](#overview)
   - [Getting a _Remote Repository_](#getting-a-remote-repository)
   - [Adding new things](#adding-new-things)
@@ -315,7 +314,7 @@ We've just changed `Alice.txt` on the `change_alice` branch, and I'd say we're h
 
 If you go and `git checkout master`, the `commit` we made on the other branch will not be there. To get the changes into master we need to `merge` the `change_alice` branch _into_ master. 
 
-Note that you always `merge` a particular branch _into_ the one you're currently at. 
+<ins>Note that you always `merge` a particular branch _into_ the one you're currently at. </ins>
 
 ### Fast-Forward merging
 
