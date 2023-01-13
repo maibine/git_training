@@ -2,6 +2,6 @@ Hi! I'm Alice. I'm a file someone added to this repository a while ago.
 Some change on branch
 Some ather change on branch
 add new text
-NEW row directly from browser
+NEW row directly from browser changed locally at work
 changed again on website
 2
