@@ -1,4 +1,4 @@
-[![.AAA](https://github.com/maibine/git_training/actions/workflows/dotnet.yml/badge.svg)](https://github.com/maibine/git_training/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/maibine/git_training/actions/workflows/dotnet.yml/badge.svg)](https://github.com/maibine/git_training/actions/workflows/dotnet.yml)
 
 # Learn `git` concepts, not commands
 
