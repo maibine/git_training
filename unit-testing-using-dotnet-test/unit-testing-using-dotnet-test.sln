@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeService", "PrimeService\PrimeService.csproj", "{5D20B15A-3F4C-4E6A-A747-46BC1E6DDFE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeService.Tests", "PrimeService.Tests\PrimeService.Tests.csproj", "{799A5FB5-6401-4673-A779-391004E8EBDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D20B15A-3F4C-4E6A-A747-46BC1E6DDFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D20B15A-3F4C-4E6A-A747-46BC1E6DDFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D20B15A-3F4C-4E6A-A747-46BC1E6DDFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D20B15A-3F4C-4E6A-A747-46BC1E6DDFE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{799A5FB5-6401-4673-A779-391004E8EBDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799A5FB5-6401-4673-A779-391004E8EBDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799A5FB5-6401-4673-A779-391004E8EBDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799A5FB5-6401-4673-A779-391004E8EBDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
