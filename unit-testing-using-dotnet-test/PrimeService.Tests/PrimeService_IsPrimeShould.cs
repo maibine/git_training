@@ -48,5 +48,16 @@ namespace Prime.UnitTests.Services
 
             Assert.False(result, $"{value} should not be prime");
         }
+
+        [Theory]
+        [InlineData(13)]
+        [InlineData(11)]
+        [InlineData(17)]
+         public void IsPrime_PrimesBiggerThan10_ReturnTrue(int value)
+        {
+            var result = _primeService.IsPrime(value);
+
+            Assert.True(result, $"{value} should be prime");
+        }
     }
 }
