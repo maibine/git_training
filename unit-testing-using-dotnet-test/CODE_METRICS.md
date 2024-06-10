@@ -13,8 +13,8 @@ The *PrimeService.Tests.csproj* project file contains:
 
 - 1 namespaces.
 - 1 named types.
-- 49 total lines of source code.
-- Approximately 18 lines of executable code.
+- 61 total lines of source code.
+- Approximately 24 lines of executable code.
 - The highest cyclomatic complexity is 1 :heavy_check_mark:.
 
 <details>
@@ -28,8 +28,8 @@ The *PrimeService.Tests.csproj* project file contains:
 The `Prime.UnitTests.Services` namespace contains 1 named types.
 
 - 1 named types.
-- 49 total lines of source code.
-- Approximately 18 lines of executable code.
+- 61 total lines of source code.
+- Approximately 24 lines of executable code.
 - The highest cyclomatic complexity is 1 :heavy_check_mark:.
 
 <details>
@@ -40,9 +40,9 @@ The `Prime.UnitTests.Services` namespace contains 1 named types.
 </summary>
 <br>
 
-- The `PrimeService_IsPrimeShould` contains 5 members.
-- 46 total lines of source code.
-- Approximately 18 lines of executable code.
+- The `PrimeService_IsPrimeShould` contains 6 members.
+- 58 total lines of source code.
+- Approximately 24 lines of executable code.
 - The highest cyclomatic complexity is 1 :heavy_check_mark:.
 
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
@@ -50,6 +50,7 @@ The `Prime.UnitTests.Services` namespace contains 1 named types.
 | Field | <a href='https://github.com/maibine/git_training/blob/master/unit-testing-using-dotnet-test/PrimeService.Tests/PrimeService_IsPrimeShould.cs#L8' title='PrimeService PrimeService_IsPrimeShould._primeService'>8</a> | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
 | Method | <a href='https://github.com/maibine/git_training/blob/master/unit-testing-using-dotnet-test/PrimeService.Tests/PrimeService_IsPrimeShould.cs#L10' title='PrimeService_IsPrimeShould.PrimeService_IsPrimeShould()'>10</a> | 100 | 1 :heavy_check_mark: | 0 | 1 | 4 / 1 |
 | Method | <a href='https://github.com/maibine/git_training/blob/master/unit-testing-using-dotnet-test/PrimeService.Tests/PrimeService_IsPrimeShould.cs#L45' title='void PrimeService_IsPrimeShould.IsPrime_NonPrimesLessThan10_ReturnFalse(int value)'>45</a> | 72 | 1 :heavy_check_mark: | 0 | 4 | 11 / 6 |
+| Method | <a href='https://github.com/maibine/git_training/blob/master/unit-testing-using-dotnet-test/PrimeService.Tests/PrimeService_IsPrimeShould.cs#L57' title='void PrimeService_IsPrimeShould.IsPrime_PrimesBiggerThan10_ReturnTrue(int value)'>57</a> | 72 | 1 :heavy_check_mark: | 0 | 4 | 11 / 6 |
 | Method | <a href='https://github.com/maibine/git_training/blob/master/unit-testing-using-dotnet-test/PrimeService.Tests/PrimeService_IsPrimeShould.cs#L33' title='void PrimeService_IsPrimeShould.IsPrime_PrimesLessThan10_ReturnTrue(int value)'>33</a> | 72 | 1 :heavy_check_mark: | 0 | 4 | 13 / 6 |
 | Method | <a href='https://github.com/maibine/git_training/blob/master/unit-testing-using-dotnet-test/PrimeService.Tests/PrimeService_IsPrimeShould.cs#L20' title='void PrimeService_IsPrimeShould.IsPrime_ValuesLessThan2_ReturnFalse(int value)'>20</a> | 75 | 1 :heavy_check_mark: | 0 | 4 | 11 / 5 |
 
@@ -140,6 +141,7 @@ class PrimeService_IsPrimeShould{
     +IsPrime_ValuesLessThan2_ReturnFalse(int value) void
     +IsPrime_PrimesLessThan10_ReturnTrue(int value) void
     +IsPrime_NonPrimesLessThan10_ReturnFalse(int value) void
+    +IsPrime_PrimesBiggerThan10_ReturnTrue(int value) void
 }
 
 ```
