@@ -2,8 +2,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 as build-env
 
 # Copy everything and publish the release (publish implicitly restores and builds)
-COPY GitHubAction ./GitHubAction
-COPY DotNet.CodeAnalysis ./DotNet.CodeAnalysis
+
+COPY . ./
+#Have to copy also the dockerfile
+#COPY GitHubAction ./GitHubAction 
+#COPY DotNet.CodeAnalysis ./DotNet.CodeAnalysis
 RUN dotnet publish ./GitHubAction/GitHubAction.csproj -c Release -o out --no-self-contained
 
 # Label the container
