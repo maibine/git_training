@@ -53,6 +53,7 @@ namespace Prime.UnitTests.Services
         [InlineData(13)]
         [InlineData(11)]
         [InlineData(17)]
+        [InlineData(19)]
          public void IsPrime_PrimesBiggerThan10_ReturnTrue(int value)
         {
             var result = _primeService.IsPrime(value);

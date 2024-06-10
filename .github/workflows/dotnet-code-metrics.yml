@@ -2,7 +2,7 @@ name: '.NET code metrics'
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
     - 'unit-testing-using-dotnet-test/**'               # run on all changes to this dir
     - '!unit-testing-using-dotnet-test/CODE_METRICS.md' # ignore this file
