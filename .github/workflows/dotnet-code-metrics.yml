@@ -31,7 +31,7 @@ jobs:
 
     - name: .NET code metrics
       id: dotnet-code-metrics
-      uses: maibine/git_training/GitHubAction@master
+      uses: maibine/git_training/Action/GitHubAction@master
       env:
         GREETINGS: 'Hello, Adi!' # ${{ secrets.GITHUB_TOKEN }}
       with:
