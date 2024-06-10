@@ -38,7 +38,7 @@ jobs:
         owner: ${{ github.repository_owner }}
         name: ${{ github.repository }}
         branch: ${{ github.ref }}
-        dir: ${{ './GitHubAction' }}
+        dir: ${{ './unit-testing-using-dotnet-test' }}
       
     - name: Create pull request
       uses: peter-evans/create-pull-request@v6
