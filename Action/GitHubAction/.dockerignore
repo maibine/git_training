@@ -2,3 +2,13 @@
 
 bin/
 obj/
+
+# .vs folder
+.vs/
+
+# Build folders
+**/[b|B]in/
+**/[O|o]bj/
+
+# git folder
+.git/
