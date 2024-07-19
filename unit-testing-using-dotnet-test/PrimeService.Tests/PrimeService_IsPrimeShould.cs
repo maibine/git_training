@@ -1,4 +1,3 @@
-using Xunit;
 using Prime.Services;
 
 namespace Prime.UnitTests.Services
