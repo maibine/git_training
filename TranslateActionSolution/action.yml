@@ -1,6 +1,6 @@
-name: 'Translate Docusaurus'
+name: 'Translate Documentation'
 description: 'A GitHub Action to translate documentation using OpenAI.'
-author: 'Your Name <adrian.g@fluentis.com>'
+author: 'Your Name <you@example.com>'
 inputs:
   openai_api_key:
     description: 'API key for OpenAI'
