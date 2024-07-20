@@ -1,0 +1,32 @@
+name: 'Translate Docusaurus'
+description: 'A GitHub Action to translate documentation using OpenAI.'
+author: 'Your Name <adrian.g@fluentis.com>'
+inputs:
+  openai_api_key:
+    description: 'API key for OpenAI'
+    required: true
+  lang:
+    description: 'Target language for translation'
+    required: true
+  input_dir:
+    description: 'Directory containing the files to be translated'
+    required: true
+  repo_dir:
+    description: 'Root directory of the repository'
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.input_dir }}
+    - ${{ inputs.repo_dir }}
+    - ${{ inputs.lang }}
+
+env:
+  OPENAI_API_KEY: ${{ inputs.openai_api_key }}
+  LANG: ${{ inputs.lang }}
+
+branding:
+  icon: 'book-open'
+  color: 'blue'
