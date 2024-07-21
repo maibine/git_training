@@ -43,6 +43,9 @@ if (string.IsNullOrEmpty(openaiApiKey))
     return;
 }
 
+// Configure Git to treat the repository directory as safe
+ConfigureGitSafeDirectory(repoDir);
+
 // Log environment variables and paths
 Console.WriteLine($"Language: {language}");
 Console.WriteLine($"OpenAI API Key: {(string.IsNullOrEmpty(openaiApiKey) ? "Missing" : "Present")}");
@@ -232,6 +235,29 @@ string GetOutputDir(string repoDir, string filePath, string language)
 	var parts = relativePath.Split(Path.DirectorySeparatorChar).Skip(1).ToArray();
 	parts = new[] { "i18n", language, "docusaurus-plugin-content-docs", "current" }.Concat(parts).ToArray();
 	return Path.Combine(repoDir, Path.Combine(parts.Take(parts.Length - 1).ToArray()));
+}
+
+void ConfigureGitSafeDirectory(string repoDir)
+{
+    using var process = new Process
+    {
+        StartInfo = new ProcessStartInfo
+        {
+            WorkingDirectory = repoDir,
+            FileName = "git",
+            Arguments = "config --global --add safe.directory /github/workspace",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        }
+    };
+    process.Start();
+    while (!process.StandardOutput.EndOfStream)
+    {
+        var line = process.StandardOutput.ReadLine();
+        Console.WriteLine(line);
+    }
+    process.WaitForExit();
 }
 
 //docker run --rm -e OPENAI_API_KEY= -v "D:\Work\Documentation\FluentisDoc-GH:/app/FluentisDoc-GH" translate-action "/app/FluentisDoc-GH/docs/crm/chance" "/app/FluentisDoc-GH" "en,ro,hr,pt"
