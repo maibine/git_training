@@ -23,10 +23,6 @@ runs:
     - ${{ inputs.repo_dir }}
     - ${{ inputs.lang }}
 
-env:
-  OPENAI_API_KEY: ${{ inputs.openai_api_key }}
-  LANG: ${{ inputs.lang }}
-
 branding:
   icon: 'book-open'
   color: 'blue'
