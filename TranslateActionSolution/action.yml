@@ -22,6 +22,7 @@ runs:
     - ${{ inputs.input_dir }}
     - ${{ inputs.repo_dir }}
     - ${{ inputs.lang }}
+    - ${{ inputs.openai_api_key }}
 
 branding:
   icon: 'book-open'

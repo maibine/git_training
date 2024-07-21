@@ -1,60 +1,74 @@
 ﻿using System.Net.Sockets;
 using System;
 
+
+if (args.Length < 4)
+{
+    Console.WriteLine("Missing required arguments. Expected: <input_dir> <repo_dir> <lang> <openai_api_key>");
+    return;
+}
+
 string inputDir = args[0];
-string repoDir = args.Length > 1 ? args[1] : Directory.GetCurrentDirectory();
-string language = Environment.GetEnvironmentVariable("lang");
+string repoDir = args[1];
+string language = args[2];
+string openaiApiKey = args[3];
 
-if (string.IsNullOrEmpty(language))
+if (string.IsNullOrEmpty(inputDir))
 {
-	Console.WriteLine("Language environment variable is missing.");
-	return;
+    Console.WriteLine("Input directory argument is missing.");
+    return;
 }
 
-string openaiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-if (string.IsNullOrEmpty(openaiApiKey))
-{
-	Console.WriteLine("OpenAI API key is missing.");
-	return;
-}
-
-// Verify that the directories exist
 if (!Directory.Exists(inputDir))
 {
-	Console.WriteLine($"Input directory does not exist: {inputDir}");
-	return;
+    Console.WriteLine($"Input directory does not exist: {inputDir}");
+    return;
 }
 
 if (!Directory.Exists(repoDir))
 {
-	Console.WriteLine($"Repository directory does not exist: {repoDir}");
-	return;
+    Console.WriteLine($"Repository directory does not exist: {repoDir}");
+    return;
 }
+
+if (string.IsNullOrEmpty(language))
+{
+    Console.WriteLine("Language environment variable is missing.");
+    return;
+}
+
+if (string.IsNullOrEmpty(openaiApiKey))
+{
+    Console.WriteLine("OpenAI API key is missing.");
+    return;
+}
+
+// Log environment variables and paths
+Console.WriteLine($"Language: {language}");
+Console.WriteLine($"OpenAI API Key: {(string.IsNullOrEmpty(openaiApiKey) ? "Missing" : "Present")}");
+Console.WriteLine($"Input Directory: {inputDir}");
+Console.WriteLine($"Repository Directory: {repoDir}");
+Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
 
 // List the contents of the directories for debugging
 Console.WriteLine("Contents of input directory:");
 foreach (var file in Directory.GetFiles(inputDir))
 {
-	Console.WriteLine(file);
+    Console.WriteLine(file);
 }
 
 Console.WriteLine("Contents of repository directory:");
 foreach (var file in Directory.GetFiles(repoDir))
 {
-	Console.WriteLine(file);
+    Console.WriteLine(file);
 }
-
-//string[] languages = args[2].Split(',');
-
-// Get new files added in the last commit
-var newFiles = GetNewFiles(repoDir).Where(f => f.StartsWith(inputDir.Replace(Path.DirectorySeparatorChar, '/'))).ToList();
-
-
 //// Get files changed in the last commit
 //var changedFiles = GetChangedFiles(repoDir).Where(f => f.StartsWith(inputDir)).ToList();
 
 try
 {
+	 var newFiles = GetNewFiles(repoDir).Where(f => f.StartsWith(inputDir.Replace(Path.DirectorySeparatorChar, '/'))).ToList();
+
 	foreach (var file in newFiles)
 	{
 		string normalizedFile = Path.Combine(repoDir, file.Replace('/', Path.DirectorySeparatorChar));
