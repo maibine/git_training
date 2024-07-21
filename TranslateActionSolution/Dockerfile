@@ -24,6 +24,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends git \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=build /app/publish .
-RUN chmod +x TranslateAction
-ENTRYPOINT ["./TranslateAction"]
+COPY --from=build /app/publish /app
+RUN chmod +x /app/TranslateAction
+ENTRYPOINT ["/app/TranslateAction"]
