@@ -191,6 +191,12 @@ List<string> GetNewFiles(string repoDir)
 		}
 	}
 	process.WaitForExit();
+
+	if (result.Count == 0)
+    {
+        Console.WriteLine("No new files found in the last commit.");
+    }
+
 	return result;
 }
 
