@@ -50,6 +50,9 @@ Console.WriteLine($"Input Directory: {inputDir}");
 Console.WriteLine($"Repository Directory: {repoDir}");
 Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
 
+// Print the Git log for debugging
+PrintGitLog(repoDir);
+
 // List the contents of the directories for debugging
 Console.WriteLine("Contents of input directory:");
 foreach (var file in Directory.GetFiles(inputDir))
@@ -85,6 +88,29 @@ catch (Exception ex)
 {
 	Console.WriteLine($"Error during processing: {ex.Message}");
 	Console.WriteLine(ex.StackTrace);
+}
+
+void PrintGitLog(string repoDir)
+{
+    using var process = new Process
+    {
+        StartInfo = new ProcessStartInfo
+        {
+            WorkingDirectory = repoDir,
+            FileName = "git",
+            Arguments = "log --oneline -5",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        }
+    };
+    process.Start();
+    while (!process.StandardOutput.EndOfStream)
+    {
+        var line = process.StandardOutput.ReadLine();
+        Console.WriteLine(line);
+    }
+    process.WaitForExit();
 }
 
 async Task<string> TranslateText(string text, string targetLanguage, string apiKey)
