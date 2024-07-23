@@ -118,7 +118,17 @@ void PrintGitLog(string repoDir)
 
 async Task<string> TranslateText(string text, string targetLanguage, string apiKey)
 {
-	string prompt = $"Translate the following text to {targetLanguage}:\n\n{text}";
+	string prompt = $"Instructions: Translate the following " +
+					$"text to {targetLanguage} " +
+					$"while maintaining the original formatting: \"{text}\".\r\nformat: Return only the translated content, not including the original text.";
+
+	string systemPrompt = $"You are a helpful assistant " +
+					$"that translates to {targetLanguage}." +
+					"Your task is to translate a Markdown file, while preserving the original formatting, including " +
+					"inline elements like links and images. " +
+					"Make sure to ignore HTML tags and code blocks, but translate code comments. " +
+					"Be cautious when translating Markdown links, Markdown images, and Markdown headings. " +
+					"Make sure TOC links like (#content) are translated.";
 
 	// Create the JSON request body using JObject
 	var requestBody = new JObject
@@ -129,7 +139,7 @@ async Task<string> TranslateText(string text, string targetLanguage, string apiK
 				new JObject
 				{
 					 ["role"] = "system",
-					 ["content"] = "You are a helpful assistant."
+					 ["content"] = systemPrompt
 				},
 				new JObject
 				{
