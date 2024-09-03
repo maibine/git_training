@@ -1,12 +1,20 @@
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'TranslateActionSolution/**'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'TranslateActionSolution/**'
+  release:
+    types:
+      - published  # Trigger the workflow when a release is published
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag name'
+        required: true
+        default: 'latest'  # Provide a default value if desired
 
 permissions:
   contents: read
@@ -24,7 +32,14 @@ jobs:
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
     - name: Build Docker image
-      run: docker build -t ghcr.io/${{ github.repository_owner }}/translate-action:latest ./TranslateActionSolution
+      run: |
+        # Use the release tag or manually provided tag to version the Docker image
+        docker build -t ghcr.io/${{ github.repository_owner }}/translate-action:latest \
+                      -t ghcr.io/${{ github.repository_owner }}/translate-action:${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.tag_name }} \
+                      ./TranslateActionSolution
 
     - name: Push Docker image
-      run: docker push ghcr.io/${{ github.repository_owner }}/translate-action:latest
+      run: |
+        # Push both the 'latest' and the versioned tag
+        docker push ghcr.io/${{ github.repository_owner }}/translate-action:latest
+        docker push ghcr.io/${{ github.repository_owner }}/translate-action:${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.tag_name }}
