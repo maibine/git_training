@@ -1,11 +1,12 @@
 ﻿using System.Net.Sockets;
 using System;
+using TranslateAction;
 
 
 if (args.Length < 4)
 {
-    Console.WriteLine("Missing required arguments. Expected: <input_dir> <repo_dir> <lang> <openai_api_key>");
-    return;
+	Console.WriteLine("Missing required arguments. Expected: <input_dir> <repo_dir> <lang> <openai_api_key>");
+	return;
 }
 
 string inputDir = args[0];
@@ -15,32 +16,32 @@ string openaiApiKey = args[3];
 
 if (string.IsNullOrEmpty(inputDir))
 {
-    Console.WriteLine("Input directory argument is missing.");
-    return;
+	Console.WriteLine("Input directory argument is missing.");
+	return;
 }
 
 if (!Directory.Exists(inputDir))
 {
-    Console.WriteLine($"Input directory does not exist: {inputDir}");
-    return;
+	Console.WriteLine($"Input directory does not exist: {inputDir}");
+	return;
 }
 
 if (!Directory.Exists(repoDir))
 {
-    Console.WriteLine($"Repository directory does not exist: {repoDir}");
-    return;
+	Console.WriteLine($"Repository directory does not exist: {repoDir}");
+	return;
 }
 
 if (string.IsNullOrEmpty(language))
 {
-    Console.WriteLine("Language environment variable is missing.");
-    return;
+	Console.WriteLine("Language environment variable is missing.");
+	return;
 }
 
 if (string.IsNullOrEmpty(openaiApiKey))
 {
-    Console.WriteLine("OpenAI API key is missing.");
-    return;
+	Console.WriteLine("OpenAI API key is missing.");
+	return;
 }
 
 // Configure Git to treat the repository directory as safe
@@ -60,26 +61,29 @@ PrintGitLog(repoDir);
 Console.WriteLine("Contents of input directory:");
 foreach (var file in Directory.GetFiles(inputDir))
 {
-    Console.WriteLine(file);
+	Console.WriteLine(file);
 }
 
 Console.WriteLine("Contents of repository directory:");
 foreach (var file in Directory.GetFiles(repoDir))
 {
-    Console.WriteLine(file);
+	Console.WriteLine(file);
 }
 //// Get files changed in the last commit
 //var changedFiles = GetChangedFiles(repoDir).Where(f => f.StartsWith(inputDir)).ToList();
 
 try
 {
-	 var newFiles = GetNewFiles(repoDir).Where(f => f.StartsWith(inputDir.Replace(Path.DirectorySeparatorChar, '/'))).ToList();
+	var newFiles = GetNewFiles(repoDir).Where(f => f.StartsWith(inputDir.Replace(Path.DirectorySeparatorChar, '/'))).ToList();
 
 	foreach (var file in newFiles)
 	{
 		string normalizedFile = Path.Combine(repoDir, file.Replace('/', Path.DirectorySeparatorChar));
 		string content = await File.ReadAllTextAsync(normalizedFile);
-		string translatedContent = await TranslateText(content, language, openaiApiKey);
+
+		string translatedContent = normalizedFile.EndsWith(".json") ? await TranslateService.TranslateJsonAsync(language, content, openaiApiKey)
+			: await TranslateService.TranslateMarkdownAsync(content, language, openaiApiKey);
+
 		string outputDir = GetOutputDir(repoDir, normalizedFile, language);
 		Directory.CreateDirectory(outputDir);
 		string outputFile = Path.Combine(outputDir, Path.GetFileName(normalizedFile));
@@ -95,92 +99,25 @@ catch (Exception ex)
 
 void PrintGitLog(string repoDir)
 {
-    using var process = new Process
-    {
-        StartInfo = new ProcessStartInfo
-        {
-            WorkingDirectory = repoDir,
-            FileName = "git",
-            Arguments = "log --oneline -5",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        }
-    };
-    process.Start();
-    while (!process.StandardOutput.EndOfStream)
-    {
-        var line = process.StandardOutput.ReadLine();
-        Console.WriteLine(line);
-    }
-    process.WaitForExit();
-}
-
-async Task<string> TranslateText(string text, string targetLanguage, string apiKey)
-{
-	string prompt = $"Instructions: Translate the following " +
-					$"text to {targetLanguage} " +
-					$"while maintaining the original formatting: \"{text}\".\r\nformat: Return only the translated content, not including the original text.";
-
-	string systemPrompt = $"You are a helpful assistant " +
-					$"that translates to {targetLanguage}." +
-					"Your task is to translate a Markdown file, while preserving the original formatting, including " +
-					"inline elements like links and images. " +
-					"Make sure to ignore HTML tags and code blocks, but translate code comments. " +
-					"Be cautious when translating Markdown links, Markdown images, and Markdown headings. " +
-					"Make sure TOC links like (#content) are translated.";
-
-	// Create the JSON request body using JObject
-	var requestBody = new JObject
+	using var process = new Process
 	{
-		["model"] = "gpt-3.5-turbo",
-		["messages"] = new JArray
-		  {
-				new JObject
-				{
-					 ["role"] = "system",
-					 ["content"] = systemPrompt
-				},
-				new JObject
-				{
-					 ["role"] = "user",
-					 ["content"] = prompt
-				}
-		  }
-	};
-
-	string requestBodyJson = requestBody.ToString();
-	Console.WriteLine($"Request Body JSON: {requestBodyJson}");
-
-	var content = new StringContent(requestBodyJson, Encoding.UTF8, "application/json");
-
-	using var client = new HttpClient();
-	client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-
-
-	try
-	{
-		var response = await client.PostAsync("https://api.openai.com/v1/chat/completions", content);
-		var responseString = await response.Content.ReadAsStringAsync();
-		var responseObject = JObject.Parse(responseString);
-
-		// Add detailed logging
-		Console.WriteLine($"Response JSON: {responseString}");
-
-		var messageContent = responseObject["choices"]?[0]?["message"]?["content"]?.ToString().Trim();
-		if (messageContent == null)
+		StartInfo = new ProcessStartInfo
 		{
-			throw new Exception("Failed to extract 'content' from OpenAI response.");
+			WorkingDirectory = repoDir,
+			FileName = "git",
+			Arguments = "log --oneline -5",
+			RedirectStandardOutput = true,
+			UseShellExecute = false,
+			CreateNoWindow = true
 		}
-
-		return messageContent;
-	}
-	catch (Exception ex)
+	};
+	process.Start();
+	while (!process.StandardOutput.EndOfStream)
 	{
-		Console.WriteLine($"Error during translation: {ex.Message}");
-		Console.WriteLine(ex.StackTrace);
-		throw;
+		var line = process.StandardOutput.ReadLine();
+		Console.WriteLine(line);
 	}
+	process.WaitForExit();
 }
 
 List<string> GetChangedFiles(string repoDir)
@@ -232,9 +169,9 @@ List<string> GetNewFiles(string repoDir)
 	process.WaitForExit();
 
 	if (result.Count == 0)
-    {
-        Console.WriteLine("No new files found in the last commit.");
-    }
+	{
+		Console.WriteLine("No new files found in the last commit.");
+	}
 
 	return result;
 }
@@ -249,25 +186,25 @@ string GetOutputDir(string repoDir, string filePath, string language)
 
 void ConfigureGitSafeDirectory(string repoDir)
 {
-    using var process = new Process
-    {
-        StartInfo = new ProcessStartInfo
-        {
-            WorkingDirectory = repoDir,
-            FileName = "git",
-            Arguments = "config --global --add safe.directory /github/workspace",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        }
-    };
-    process.Start();
-    while (!process.StandardOutput.EndOfStream)
-    {
-        var line = process.StandardOutput.ReadLine();
-        Console.WriteLine(line);
-    }
-    process.WaitForExit();
+	using var process = new Process
+	{
+		StartInfo = new ProcessStartInfo
+		{
+			WorkingDirectory = repoDir,
+			FileName = "git",
+			Arguments = "config --global --add safe.directory /github/workspace",
+			RedirectStandardOutput = true,
+			UseShellExecute = false,
+			CreateNoWindow = true
+		}
+	};
+	process.Start();
+	while (!process.StandardOutput.EndOfStream)
+	{
+		var line = process.StandardOutput.ReadLine();
+		Console.WriteLine(line);
+	}
+	process.WaitForExit();
 }
 
 //docker run --rm -e OPENAI_API_KEY= -v "D:\Work\Documentation\FluentisDoc-GH:/app/FluentisDoc-GH" translate-action "/app/FluentisDoc-GH/docs/crm/chance" "/app/FluentisDoc-GH" "en,ro,hr,pt"
