@@ -1,44 +1,147 @@
-﻿using ClosedXML.Excel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TranslateAction
 {
 	internal class TranslationDictionary
 	{
 		public Dictionary<string, (string ro, string en)> Translations { get; private set; } = new Dictionary<string, (string ro, string en)>();
-
-		public void LoadFromExcel(int skipRows = 0)
+		
+		public void LoadFromCsv()
 		{
-			string resourceName = "TranslateAction.Resources.Dict-ro-it-en_20240723.xlsx";
+			Translations.Clear();
+			//using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			// Specify the namespace and the resource file name
+			string resourceName = "TranslateAction.Resources.Dict-ro-it-en_20240723.csv";
 
 			// Get the current assembly
 			Assembly assembly = Assembly.GetExecutingAssembly();
 
 			// Load the embedded file into a stream
 			using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-			using (var workbook = new XLWorkbook(stream))
 			{
-				var worksheet = workbook.Worksheet(1); // Assuming data is in the first worksheet
-				foreach (var row in worksheet.RangeUsed().RowsUsed().Skip(skipRows))
+				if (stream != null)
 				{
-					var it = row.Cell(2).GetString().Trim().ToLowerInvariant();
-					var ro = row.Cell(1).GetString().Trim();
-					var en = row.Cell(3).GetString().Trim();
-
-					if (!Translations.ContainsKey(it))
+					using (StreamReader reader = new StreamReader(stream))
 					{
-						Translations.Add(it, (ro, en));
+						bool isFirstLine = true;
+						StringBuilder currentLine = new StringBuilder();
+
+						while (!reader.EndOfStream)
+						{
+							string line = reader.ReadLine();
+
+							// Skip the header line
+							if (isFirstLine)
+							{
+								isFirstLine = false;
+								continue;
+							}
+
+							// Append current line to handle multi-line fields
+							if (currentLine.Length > 0)
+							{
+								currentLine.Append("\n");
+							}
+							currentLine.Append(line);
+
+							// Check if line ends a complete CSV row (balanced quotes)
+							if (IsCompleteCsvLine(currentLine.ToString()))
+							{
+								// Parse the complete CSV line
+								var fields = ParseCsvLine(currentLine.ToString());
+
+								// Validate that there are exactly 3 fields
+								if (fields.Count == 3)
+								{
+									string ro = fields[0].Trim(); // Romanian translation
+									string it = fields[1].Trim(); // Italian translation (used as the key)
+									string en = fields[2].Trim(); // English translation
+
+									if (!string.IsNullOrWhiteSpace(it))
+									{
+										// Add to dictionary with Italian as the key
+										it = it.ToLowerInvariant();
+										Translations[it] = (ro, en);
+									}
+								}
+								else
+								{
+									Console.WriteLine($"Warning: Invalid line with {fields.Count} fields. Line: {currentLine}");
+								}
+
+								// Clear current line for next record
+								currentLine.Clear();
+							}
+						}
 					}
+
+					//// Print the dictionary for verification
+					//foreach (var item in Translations)
+					//{
+					//	Console.WriteLine($"Key (IT): {item.Key}, RO: {item.Value.ro}, EN: {item.Value.en}");
+					//}
+				}
+				else
+				{
+					Console.WriteLine("Error: Embedded resource not found.");
 				}
 			}
 		}
 
+		// Simple CSV line parser to handle quoted commas and multi-line fields
+		private static List<string> ParseCsvLine(string line)
+		{
+			var result = new List<string>();
+			bool inQuotes = false;
+			var currentField = new StringBuilder();
+
+			for (int i = 0; i < line.Length; i++)
+			{
+				char c = line[i];
+
+				if (c == '\"')
+				{
+					inQuotes = !inQuotes; // Toggle inQuotes flag
+				}
+				else if (c == ',' && !inQuotes)
+				{
+					// End of field
+					result.Add(currentField.ToString().Trim());
+					currentField.Clear();
+				}
+				else
+				{
+					currentField.Append(c);
+				}
+			}
+
+			// Add the last field
+			result.Add(currentField.ToString().Trim());
+
+			return result;
+		}
+
+		// Helper function to check if a CSV line is complete (all quotes are balanced)
+		private static bool IsCompleteCsvLine(string line)
+		{
+			int quoteCount = 0;
+			foreach (char c in line)
+			{
+				if (c == '\"')
+					quoteCount++;
+			}
+
+			// Line is complete if the number of quotes is even
+			return quoteCount % 2 == 0;
+		}
+		
 		public string Translate(string text, string targetLanguage)
 		{
 			text = text.Trim().ToLowerInvariant();

@@ -45,7 +45,7 @@ if (string.IsNullOrEmpty(openaiApiKey))
 }
 
 var dictionary = new TranslationDictionary();
-dictionary.LoadFromExcel(skipRows: 2); // Skip the first row
+dictionary.LoadFromCsv();
 Console.WriteLine($"Dictionary loaded {dictionary.Translations.Count} rows.");
 
 // Configure Git to treat the repository directory as safe
