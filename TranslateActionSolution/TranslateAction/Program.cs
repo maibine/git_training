@@ -44,6 +44,10 @@ if (string.IsNullOrEmpty(openaiApiKey))
 	return;
 }
 
+var dictionary = new TranslationDictionary();
+dictionary.LoadFromExcel(skipRows: 2); // Skip the first row
+Console.WriteLine($"Dictionary loaded {dictionary.Translations.Count} rows.");
+
 // Configure Git to treat the repository directory as safe
 ConfigureGitSafeDirectory(repoDir);
 
@@ -83,6 +87,11 @@ try
 
 		string translatedContent = normalizedFile.EndsWith(".json") ? await TranslateService.TranslateJsonAsync(language, content, openaiApiKey)
 			: await TranslateService.TranslateMarkdownAsync(content, language, openaiApiKey);
+
+		if (dictionary != null && !file.EndsWith(".json"))
+		{
+			translatedContent = dictionary.ReplaceTranslations(translatedContent, language);
+		}
 
 		string outputDir = GetOutputDir(repoDir, normalizedFile, language);
 		Directory.CreateDirectory(outputDir);
