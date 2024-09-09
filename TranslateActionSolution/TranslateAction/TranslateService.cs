@@ -10,14 +10,18 @@ namespace TranslateAction
 	{
 		public static async Task<string> TranslateMarkdownAsync(string text, string targetLanguage, string apiKey)
 		{
-			if (!sampleItTranslations.ContainsKey(targetLanguage))
+			var sampleLang = targetLanguage;
+			if (sampleLang.Contains("-"))
+				sampleLang = sampleLang.Substring(0,2);
+
+			if (!sampleItTranslations.ContainsKey(sampleLang))
 			{
 				var message = $"No {targetLanguage} sample translation found in sampleItTranslations!";
 				Console.WriteLine(message);
 				throw new InvalidOperationException(message);
 			}
 
-			string assistantSampleResponse = sampleItTranslations[targetLanguage];
+			string assistantSampleResponse = sampleItTranslations[sampleLang];
 
 			string systemPrompt = $"You are a helpful assistant " +
 						$"that translates to {targetLanguage}." +
